@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Number Counter Upper</title>
+  <script src="js/lib/jquery/1.4.2/jquery.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+  <script src="js/wheeltimecounter.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="css/wheeltimecounter.css" type="text/css" media="all" charset="utf-8">
+</head>
+<body>
+
+<div id="number">$3.00</div>
+<button id="start">Start</button>
+<button id="stop">Stop</button>
+
+<br>
+Counting up to
+<span id="status">some number</span>
+
+in
+<span id="timeleft">some number of second</span>s
+
+<script>
+var count = 300;
+var updater = function() {
+  var n = count += Math.round((Math.random() * 100) * ((Math.random() * 100)));
+  $('#status').html(n);
+  return n;
+};
+
+var intervalID;
+var intervalID2;
+
+$(function() {
+  var counter = $('#number').wheelTimeCounter();
+  counter
+    .setAnimationDelay(100)
+    .setFormatter(function(value) {
+      return '$' + (value/100).toFixed(2);
+    })
+    .setInitialValue(300)
+//     .setQuantum(150)
+    .initialize();
+
+  function updateCounter(delay) {
+    var target = updater();
+    counter.updateAndWait(target, delay);
+    var moment = (new Date().getTime()) + delay;
+    if(intervalID2) {
+      window.clearInterval(intervalID2);
+    }
+    intervalID2 = window.setInterval(function() {
+      $("#timeleft").html(Math.round((moment - (new Date().getTime())) / 1000));
+    }, 500);
+  }
+
+  $('#start').click(function() {
+    intervalID = window.setInterval(function() {
+     updateCounter(10000);
+    }, 5000);
+    updateCounter(5000);
+  });
+  $('#stop').click(function() {
+    window.clearInterval(intervalID);
+  });
+});
+</script>
+</body>
+</html>
